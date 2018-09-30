@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 
 namespace FPService
 {
@@ -13,8 +6,8 @@ namespace FPService
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class Service1 : IService1
     {
-        [DllImport(@"C:\Users\sulton\source\repos\ZKEngine\x64\Debug\ZEngine.dll")]
-        private extern static int IdentifyUser(string candidateTmp, string server, string user,
+        [DllImport(@"C:\htdocs\lib\sharplib\ZEngine\ZEngine.dll")]
+        private static extern int IdentifyUser(string candidateTmp, string server, string user,
          string password, string db, string query, string idFieldName,
          string printFieldName, int threadsCount);
 
