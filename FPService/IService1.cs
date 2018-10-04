@@ -23,9 +23,24 @@ namespace FPService
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
             Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "z/identify_user")]
-        int Identify(string print, string server, string user,
+            UriTemplate = "z/extern/identify_user")]
+        int ZkExternIdentifier(string print, string server, string user,
              string password, string db, string query, string idFieldName,
              string printFieldName, int threadsCount);
+
+        [OperationContract]
+        [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
+            Method = "POST", RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "z/identify_user")]
+        int ZkIdentifier(string connectionString, string query, string printFieldName,
+            int rate, string print);
+
+        [OperationContract]
+        [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
+            Method = "POST", RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "z/match_prints")]
+        int MatchPrints(string fp1, string fp2);
     }   
 }
