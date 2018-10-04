@@ -196,8 +196,7 @@ namespace FPService
         #endregion
 
         #region wide identifier
-        public int AIdentifierWide(string print, string query, string connectionString,
-         string printFieldName, string idFieldName, int rate)
+        public int AIdentifierWide(string print, string query, string connectionString, int rate)
         {
             //Connect to db
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -215,62 +214,30 @@ namespace FPService
             ParallelOptions po = new ParallelOptions();
             po.CancellationToken = cts.Token;
             po.MaxDegreeOfParallelism = Environment.ProcessorCount;
-           
-            //Parallel
-            Parallel.For(0, myData.Length, po, i =>
-            {
-                var matcher = new AEngine.Matcher();
-                var dbPrint = myData[i].ItemArray[2].ToString(); 
-                if (matcher.Match(print, dbPrint) >= rate)
-                {
-                     userId = (int)myData[i].ItemArray[1];
-                    return;
-                }
-            });
-            return userId;
-        }
 
-        private void FpIdentifyerWide(string query, string connectionString, string print,
-            string printFieldName, string idFieldName, CancellationToken token,
-            CancellationTokenSource source, int rate)
-        {
+            //Parallel
             try
             {
-                //Connect to db
-                MySqlConnection connection = new MySqlConnection(connectionString);
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                connection.Open();               
-                MySqlDataReader dataReader = cmd.ExecuteReader();
-
-                var matcher = new AEngine.Matcher();
-
-                while (dataReader.Read())
+                Parallel.For(0, myData.Length, po, i =>
                 {
-                    if (token.IsCancellationRequested)
-                        return;
-
-                    var dbPrint = dataReader[printFieldName].ToString();
+                    var matcher = new AEngine.Matcher();
+                    var dbPrint = myData[i].ItemArray[2].ToString();
                     if (matcher.Match(print, dbPrint) >= rate)
                     {
-                        var userId = (int)dataReader[idFieldName];
-                        if (userId > 0)
-                        {
-                            Id = userId;
-                            source.Cancel();
-                        }
+                        userId = (int)myData[i].ItemArray[1];
                     }
-                }
-
-                dataReader.Close();
-                dataReader.Dispose();
-                connection.Close();
-                connection.Dispose();
+                    po.CancellationToken.ThrowIfCancellationRequested();
+                });
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                Id = -1;
+                cts.Dispose();
             }
-        }
+
+            connection.Close();
+            connection.Dispose();
+            return userId;
+        }        
         #endregion
         #endregion
 
