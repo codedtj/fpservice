@@ -32,9 +32,16 @@ namespace FPService
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
             Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "z/parallel/identify_user_wide")]
+        int ZkIdentifierWide(string print, string query, string connectionString, int rate);
+
+        [OperationContract]
+        [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
+            Method = "POST", RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "z/identify_user")]
         int ZkIdentifier(string connectionString, string query, string printFieldName,
-            int rate, string print);
+           string idFieldName, int rate, string print);
 
         [OperationContract]
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
