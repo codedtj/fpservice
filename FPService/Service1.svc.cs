@@ -15,7 +15,7 @@ namespace FPService
         private static extern int ZKFPM_Init();
 
         [DllImport("libzkfp.dll")]
-        private static extern int ZKFPM_MatchFinger(IntPtr hDBCache, IntPtr fpTemplate1, uint cbTemplate1,
+        private static extern int ZKFPM_MatchFinger(IntPtr hDbCache, IntPtr fpTemplate1, uint cbTemplate1,
             IntPtr fpTemplate2, uint cbTemplate2);
 
         [DllImport("libzkfp.dll")]
@@ -152,8 +152,9 @@ namespace FPService
             }
             catch (Exception e)
             {
-
+                // ignored
             }
+
             cts.Dispose();
             connection.Close();
             connection.Dispose();
@@ -162,18 +163,15 @@ namespace FPService
         #endregion
 
         #region AEngine
-        private int id;
+        private int _id;
         public int Id
         {
-            get
-            {
-                return id;
-            }
+            get => _id;
             set
             {
                 if (value > 0)
                 {
-                    id = value;
+                    _id = value;
                 }
             }
         }
@@ -203,7 +201,7 @@ namespace FPService
                 }, string.Format("Task{0}", idx), token);
             }
 
-            WaitHandle.WaitAll((from x in mres select x).ToArray());
+            WaitHandle.WaitAll(mres.Select(x => x).ToArray());
 
             return Id;
         }
@@ -288,10 +286,11 @@ namespace FPService
                     po.CancellationToken.ThrowIfCancellationRequested();
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                
+                // ignored
             }
+
             cts.Dispose();
             connection.Close();
             connection.Dispose();
