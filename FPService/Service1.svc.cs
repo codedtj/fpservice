@@ -16,7 +16,7 @@ namespace FPService
         private static extern int ZKFPM_Init();
 
         [DllImport("libzkfp.dll")]
-        private static extern int ZKFPM_MatchFinger(IntPtr hDBCache, IntPtr fpTemplate1, uint cbTemplate1,
+        private static extern int ZKFPM_MatchFinger(IntPtr hDbCache, IntPtr fpTemplate1, uint cbTemplate1,
             IntPtr fpTemplate2, uint cbTemplate2);
 
         [DllImport("libzkfp.dll")]
@@ -44,8 +44,8 @@ namespace FPService
             return IdentifyUser(fp1, server, user, password, db, query, idFieldName,
                                       printFieldName, threadsCount);
         }
-        
-        public int ZkIdentifier(string connectionString, string query, string printFieldName, 
+
+        public int ZkIdentifier(string connectionString, string query, string printFieldName,
             int rate, string print)
         {
             try
@@ -60,19 +60,22 @@ namespace FPService
                 ZKFPM_Init();
                 var mDbHandle = ZKFPM_CreateDBCache();
                 if (IntPtr.Zero != mDbHandle)
+                {
                     return -1;
+                }
+
                 var candidatePrint = Convert.FromBase64String(print);
                 int userId = 0;
 
                 while (dataReader.Read())
                 {
-                    var dbPrint = Convert.FromBase64String(dataReader[printFieldName].ToString());  
+                    var dbPrint = Convert.FromBase64String(dataReader[printFieldName].ToString());
                     if (ZKFPM_MatchFinger(mDbHandle, Marshal.UnsafeAddrOfPinnedArrayElement(candidatePrint, 0),
-                    (uint)candidatePrint.Length, Marshal.UnsafeAddrOfPinnedArrayElement(dbPrint, 0), 
+                    (uint)candidatePrint.Length, Marshal.UnsafeAddrOfPinnedArrayElement(dbPrint, 0),
                     (uint)dbPrint.Length) >= rate)
                     {
-                       userId = (int)dataReader["userid"];
-                       break;
+                        userId = (int)dataReader["userid"];
+                        break;
                     }
                 }
 
@@ -83,7 +86,7 @@ namespace FPService
 
                 return userId;
             }
-            catch 
+            catch
             {
                 return -10;
             }
@@ -106,18 +109,18 @@ namespace FPService
         #endregion
 
         #region AEngine
-        private int id;
+        private int _id;
         public int Id
         {
             get
             {
-                return id;
+                return _id;
             }
             set
             {
                 if (value > 0)
                 {
-                    id = value;
+                    _id = value;
                 }
             }
         }
@@ -141,19 +144,19 @@ namespace FPService
                 var idx = i;
                 Task.Factory.StartNew(state =>
                 {
-                    FpIdentifyer(queries[idx], connectionString, print, printFieldName, 
+                    FpIdentifyer(queries[idx], connectionString, print, printFieldName,
                         idFieldName, token, source, rate);
                     mres[idx].Set();
-                }, string.Format("Task{0}", idx), token);
+                }, $"Task{idx}", token);
             }
 
-            WaitHandle.WaitAll((from x in mres select x).ToArray());
+            WaitHandle.WaitAll(mres.Select(x => x).ToArray());
 
             return Id;
         }
 
         private void FpIdentifyer(string query, string connectionString, string print,
-            string printFieldName, string idFieldName, CancellationToken token, 
+            string printFieldName, string idFieldName, CancellationToken token,
             CancellationTokenSource source, int rate)
         {
             try
@@ -169,7 +172,9 @@ namespace FPService
                 while (dataReader.Read())
                 {
                     if (token.IsCancellationRequested)
+                    {
                         return;
+                    }
 
                     var dbPrint = dataReader[printFieldName].ToString();
                     if (matcher.Match(print, dbPrint) >= rate)
@@ -190,7 +195,7 @@ namespace FPService
             }
             catch (Exception e)
             {
-                Id = -1; 
+                Id = -1;
             }
         }
         #endregion
@@ -229,7 +234,7 @@ namespace FPService
                     po.CancellationToken.ThrowIfCancellationRequested();
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 cts.Dispose();
             }
@@ -237,7 +242,7 @@ namespace FPService
             connection.Close();
             connection.Dispose();
             return userId;
-        }        
+        }
         #endregion
         #endregion
 
