@@ -19,14 +19,6 @@ namespace FPService
             UriTemplate = "/hello")]
         string Hello();
 
-        [OperationContract]
-        [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
-            Method = "POST", RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "z/parallel/identify_user")]
-        int ZkExternIdentifier(string print, string server, string user,
-             string password, string db, string query, string idFieldName,
-             string printFieldName, int threadsCount);
 
         [OperationContract]
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,

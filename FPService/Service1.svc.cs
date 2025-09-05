@@ -1,7 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Data;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,10 +20,6 @@ namespace FPService
         [DllImport("libzkfp.dll")]
         private static extern IntPtr ZKFPM_CreateDBCache();
 
-        [DllImport(@"C:\htdocs\lib\sharplib\ZEngine\ZEngine.dll")]
-        private static extern int IdentifyUser(string candidateTmp, string server, string user,
-         string password, string db, string query, string idFieldName,
-         string printFieldName, int threadsCount);
         #endregion
         public string Hello()
         {
@@ -32,24 +27,6 @@ namespace FPService
         }
 
         #region ZEngine
-        public int ZkExternIdentifier(string fp1, string server, string user, string password, string db,
-             string query, string idFieldName, string printFieldName, int threadsCount)
-        {
-            try
-            {
-                server = string.IsNullOrWhiteSpace(server) ? "localhost" : server;
-                user = string.IsNullOrWhiteSpace(server) ? "root" : user;
-                idFieldName = string.IsNullOrWhiteSpace(idFieldName) ? "id" : idFieldName;
-                threadsCount = 0 < threadsCount ? threadsCount : 2;
-
-                return IdentifyUser(fp1, server, user, password, db, query, idFieldName,
-                                          printFieldName, threadsCount);
-            }
-            catch(Exception e)
-            {
-                return -10;
-            }
-        }
         
         public int ZkIdentifier(string connectionString, string query, string printFieldName,
             string idFieldName, int rate, string print)
