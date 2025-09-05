@@ -21,6 +21,7 @@ namespace FPService
 
 
         [OperationContract]
+        [FaultContract(typeof(string))]
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
             Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
@@ -28,6 +29,7 @@ namespace FPService
         int ZkIdentifierWide(string print, string query, string connectionString, int rate);
 
         [OperationContract]
+        [FaultContract(typeof(string))]
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
             Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
@@ -36,6 +38,7 @@ namespace FPService
            string idFieldName, int rate, string print);
 
         [OperationContract]
+        [FaultContract(typeof(string))]
         [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
             Method = "POST", RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
