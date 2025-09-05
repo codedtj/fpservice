@@ -49,20 +49,5 @@ namespace FPService
             ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "z/match_prints")]
         int MatchPrints(string fp1, string fp2);
-
-        [OperationContract]
-        [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
-            Method = "POST", RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "a/parallel/identify_user")]
-        int AIdentifier(string print, string[] queries, string connectionString,
-      string printFieldName, string idFieldName, int rate);
-
-        [OperationContract]
-        [WebInvoke(BodyStyle = WebMessageBodyStyle.Wrapped,
-            Method = "POST", RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "a/parallel/identify_user_wide")]
-        int AIdentifierWide(string print, string query, string connectionString, int rate);
     }   
 }
